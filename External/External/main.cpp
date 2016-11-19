@@ -3,21 +3,21 @@
 #include <TlHelp32.h>
 #include <stdint.h>
 
-DWORD aLocalPlayer = 0x00A8F53C;
+DWORD dwLocalPlayer = 0xA9053C;
 DWORD oFlags = 0x00000100;
-DWORD Jump = 0x04F47AD4;
+DWORD dwForceJump = 0x4F48A94;
 DWORD dwProcessId = 0;
 HANDLE hProcess = NULL;
 HWND hWindow = NULL;
 int vFlags;
 DWORD dwClientDLL;
 
-DWORD aEntityList = 0x04AB0F94;
+DWORD aEntityList = 0x4AB1F54;
 DWORD oCrosshair = 0x0000AA64;
 DWORD oTeamNum = 0x000000F0;
 DWORD oEntityLoopDist = 0x10;
 DWORD oHealth = 0x000000FC;
-DWORD aForceAttack = 0x02EF0F98;
+DWORD dwForceAttack = 0x2EF1F40;
 DWORD m_vecOrigin = 0x00000134;
 
 boolean trig = false;
@@ -89,6 +89,21 @@ DWORD_PTR GetModuleBaseExternal( const std::string &strModuleName, const DWORD &
 	return dwModuleBase;
 }
 
+
+template<typename T>
+T ReadMemory(DWORD Address)
+{
+	T read;
+	ReadProcessMemory(hProcess, (PBYTE*) Address, &read, sizeof(T),0);
+	return read;
+}
+
+template<typename T>
+void WriteMemory(DWORD Address, T Value)
+{
+	WriteProcessMemory(hProcess, (PBYTE*) Address, &Value, sizeof(T), 0);
+} 
+
 struct MyPlayer
 {
 	DWORD LocalPlayer;
@@ -99,10 +114,10 @@ struct MyPlayer
 
 	void ReadInformation()
 	{
-		ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aLocalPlayer), &LocalPlayer, sizeof(DWORD), 0);
-		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oTeamNum), &Team, sizeof(int), 0);
-		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oFlags), &Flags,sizeof(int),0);
-		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oCrosshair), &CrosshairID, sizeof(int), 0);
+		LocalPlayer = ReadMemory<DWORD>(dwClientDLL + dwLocalPlayer);
+		Team = ReadMemory<int>(LocalPlayer + oTeamNum);
+		Flags = ReadMemory<int>(LocalPlayer+ oFlags);
+		CrosshairID = ReadMemory<int>(LocalPlayer+ oCrosshair);
 	}
 	void bhop()
 	{
@@ -118,9 +133,7 @@ struct MyPlayer
 			{
 				vJump = 4;
 			}
-			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + Jump), &vJump, sizeof(int),0);
-			//keybd_event(MapVirtualKey(0x20,0),0x39, KEYEVENTF_EXTENDEDKEY,0);
-			//keybd_event(MapVirtualKey(0x20,0),0x39,KEYEVENTF_KEYUP,0);
+			WriteMemory<int>(dwClientDLL + dwForceJump, vJump);
 		}
 	}
 
@@ -134,27 +147,23 @@ struct MyPlayer
 		//float velo[3];
 
 		ReadInformation();
-		ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aEntityList + ((CrosshairID - 1) * oEntityLoopDist)), &enemyInCH,sizeof(DWORD), 0);
-		ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oHealth), &enemyHealth, sizeof(int), 0);
-		ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oTeamNum),&enemyTeam,sizeof(int),0);
-		//ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + m_vecOrigin), &velo,sizeof(float),0);
+		enemyInCH = ReadMemory<DWORD>(dwClientDLL + aEntityList + ((CrosshairID - 1) * oEntityLoopDist));
+		enemyHealth = ReadMemory<DWORD>(enemyInCH + oHealth);
+		enemyTeam = ReadMemory<DWORD>(enemyInCH + oTeamNum);
 		if(GetAsyncKeyState(0x47) && Team != enemyTeam && enemyHealth > 0)
 		{
-			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aForceAttack), &myval, sizeof(int),0);
+			WriteMemory(dwClientDLL + dwForceAttack, myval);
 			myval = 4;
 			Sleep(1);
-			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aForceAttack), &myval, sizeof(int),0);
+			WriteMemory(dwClientDLL + dwForceAttack, myval);
 			myval = 5;
-			//mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
-			//mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
-
 		}
 	}
 };
 
 int main( )
 {
-	std::cout << "Waiting.. for Counter-Strike: Global Offensive...";
+	std::cout << "Waiting for Counter-Strike: Global Offensive...";
 
 	while( !InitializeProcessData( "Counter-Strike: Global Offensive", hWindow, dwProcessId, hProcess ) )
 	{
@@ -173,7 +182,7 @@ int main( )
 	std::cout<< "Team: " << std::hex << me.Team << std::endl;
 	std::cout<< "Flags: " << std::hex << me.Flags << std::endl;
 
-	std::cout<< "LocalPlayer: 0x" << std::hex << aLocalPlayer << std::endl;
+	std::cout<< "LocalPlayer: 0x" << std::hex << dwLocalPlayer << std::endl;
 
 	while (true)
 	{
