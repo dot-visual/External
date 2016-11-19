@@ -3,7 +3,7 @@
 #include <TlHelp32.h>
 #include <stdint.h>
 
-DWORD LocalPlayer = 0x00A8F53C;
+DWORD aLocalPlayer = 0x00A8F53C;
 DWORD oFlags = 0x00000100;
 DWORD Jump = 0x04F47AD4;
 DWORD dwProcessId = 0;
@@ -20,13 +20,16 @@ DWORD oHealth = 0x000000FC;
 DWORD aForceAttack = 0x02EF0F98;
 DWORD m_vecOrigin = 0x00000134;
 
-int crosshairID;
-int teamNum; //2 T, 3 CT
+boolean trig = false;
+boolean bhop = false;
+bool shot = false;
+
 bool InitializeProcessData( const std::string &strWindowTitle, HWND &hWindow, DWORD &dwProcessId, HANDLE &hProcess )
 {
 	// Als erstes fragen wir ab, ob das Window Handle von FindWindow, welches wir in
 	// hWindow passen nicht 0 ist. Falls doch, verlassen wir die funktion mit einem false.
-	if( !( hWindow = FindWindowA( NULL, strWindowTitle.c_str( ) ) ) )
+	hWindow = FindWindowA(NULL, strWindowTitle.c_str());
+	if(!hWindow)
 		return false;
 
 	// Als naechstes werden wir anhand des Window Handles die Prozess Id ergattern.
@@ -86,55 +89,72 @@ DWORD_PTR GetModuleBaseExternal( const std::string &strModuleName, const DWORD &
 	return dwModuleBase;
 }
 
-void bhop()
-{
-	ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oFlags), &vFlags,sizeof(int),0);
-	//std::cout << "Flags value: " << vFlags << std::endl;
-}
-
 struct MyPlayer
 {
-	DWORD myLocalPlayer;
-	int Team;
+	DWORD LocalPlayer;
+	int Team; //2 T, 3 CT
 	float Position[3];
-	int myFlags;
+	int Flags;
+	int CrosshairID;
 
 	void ReadInformation()
 	{
-			ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + LocalPlayer), &myLocalPlayer, sizeof(DWORD), 0);
-			ReadProcessMemory(hProcess, (PBYTE*) (myLocalPlayer + oTeamNum), &Team, sizeof(int), 0);
-			ReadProcessMemory(hProcess, (PBYTE*) (myLocalPlayer + oFlags), &myFlags,sizeof(int),0);
+		ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aLocalPlayer), &LocalPlayer, sizeof(DWORD), 0);
+		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oTeamNum), &Team, sizeof(int), 0);
+		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oFlags), &Flags,sizeof(int),0);
+		ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oCrosshair), &CrosshairID, sizeof(int), 0);
+	}
+	void bhop()
+	{
+		ReadInformation();
+		int vJump;
+		if (GetAsyncKeyState(0x20))
+		{
+			if(Flags == 257)
+			{
+				vJump = 5;
+			}
+			if(Flags == 256)
+			{
+				vJump = 4;
+			}
+			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + Jump), &vJump, sizeof(int),0);
+			//keybd_event(MapVirtualKey(0x20,0),0x39, KEYEVENTF_EXTENDEDKEY,0);
+			//keybd_event(MapVirtualKey(0x20,0),0x39,KEYEVENTF_KEYUP,0);
+		}
+	}
+
+	void trigger()
+	{
+		DWORD enemyInCH;
+		int enemyHealth;
+		int enemyTeam;
+		int myval = 5;
+
+		//float velo[3];
+
+		ReadInformation();
+		ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aEntityList + ((CrosshairID - 1) * oEntityLoopDist)), &enemyInCH,sizeof(DWORD), 0);
+		ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oHealth), &enemyHealth, sizeof(int), 0);
+		ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oTeamNum),&enemyTeam,sizeof(int),0);
+		//ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + m_vecOrigin), &velo,sizeof(float),0);
+		if(GetAsyncKeyState(0x47) && Team != enemyTeam && enemyHealth > 0)
+		{
+			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aForceAttack), &myval, sizeof(int),0);
+			myval = 4;
+			Sleep(1);
+			WriteProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aForceAttack), &myval, sizeof(int),0);
+			myval = 5;
+			//mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
+			//mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
+
+		}
 	}
 };
 
-void trigger()
-{
-	DWORD enemyInCH;
-	int enemyHealth;
-	int enemyTeam;
-	float velo[3];
-
-	ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oCrosshair), &crosshairID, sizeof(int), 0);
-	ReadProcessMemory(hProcess, (PBYTE*) (LocalPlayer + oTeamNum), &teamNum, sizeof(int), 0);
-	ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + aEntityList + ((crosshairID - 1) * oEntityLoopDist)), &enemyInCH,sizeof(DWORD), 0);
-	ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oTeamNum),&enemyTeam,sizeof(int),0);
-	ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + oHealth), &enemyHealth, sizeof(int), 0);
-	ReadProcessMemory(hProcess, (PBYTE*) (enemyInCH + m_vecOrigin), &velo,sizeof(float),0);
-	//std::cout << "enemyTeam: " << enemyTeam << std::endl;
-	if(teamNum != enemyTeam && enemyHealth > 0)
-	{
-		mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
-		mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
-		Sleep(1);
-		std::cout << "loc1: " << velo[1] << std::endl;;
-	}
-
-	
-}
-
 int main( )
 {
-	std::cout << "Waiting for Counter-Strike: Global Offensive...";
+	std::cout << "Waiting.. for Counter-Strike: Global Offensive...";
 
 	while( !InitializeProcessData( "Counter-Strike: Global Offensive", hWindow, dwProcessId, hProcess ) )
 	{
@@ -147,40 +167,38 @@ int main( )
 	dwClientDLL = GetModuleBaseExternal( "client.dll", dwProcessId );
 	MODULEENTRY32 entry;
 	std::cout << "found client.dll at 0x" << std::hex << dwClientDLL << std::endl;
-	//ReadProcessMemory(hProcess, (PBYTE*) (dwClientDLL + LocalPlayer), &LocalPlayer, sizeof(DWORD), 0);
-	MyPlayer ich;
-	ich.ReadInformation();
-	std::cout<< "Team: " << std::hex << ich.Team << std::endl;
-	std::cout<< "Flags: " << std::hex << ich.myFlags << std::endl;
+	MyPlayer me;
+	me.ReadInformation();
 
-	std::cout<< "LocalPlayer: 0x" << std::hex << LocalPlayer << std::endl;
+	std::cout<< "Team: " << std::hex << me.Team << std::endl;
+	std::cout<< "Flags: " << std::hex << me.Flags << std::endl;
+
+	std::cout<< "LocalPlayer: 0x" << std::hex << aLocalPlayer << std::endl;
 
 	while (true)
 	{
-		trigger();
-		bhop();
-		//std::cout << "Flags value: " << vFlags << std::endl;
-		if(vFlags == 257 && GetAsyncKeyState(0x20))
+		if(bhop)
 		{
-			keybd_event(MapVirtualKey(0x20,0),0x39, KEYEVENTF_EXTENDEDKEY,0);
-			keybd_event(MapVirtualKey(0x20,0),0x39,KEYEVENTF_KEYUP,0);
-			Sleep(1);
+			me.bhop();
+		}
+		if(trig)
+		{
+			me.trigger();
+		}
+
+		if (GetAsyncKeyState(0x70))
+		{
+			bhop = !bhop;
+			std::cout << "bhop: " << bhop << std::endl;
+			Sleep(1000);
+		}
+		if (GetAsyncKeyState(0x71))
+		{
+			trig = !trig;
+			std::cout << "trigger: " << trig << std::endl;
+			Sleep(1000);
 		}
 	}
-
-	/*
-	while (true)
-	{
-	bhop();
-	//std::cout << "Flags value: " << vFlags << std::endl;
-	if(vFlags == 257 && GetAsyncKeyState(0x20))
-	{
-	keybd_event(MapVirtualKey(0x20,0),0x39, KEYEVENTF_EXTENDEDKEY,0);
-	keybd_event(MapVirtualKey(0x20,0),0x39,KEYEVENTF_KEYUP,0);
-	Sleep(1);
-	}
-	}
-	*/
 
 	CloseHandle( hProcess );
 
