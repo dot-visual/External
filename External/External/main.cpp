@@ -2,6 +2,8 @@
 #include "Windows.h"
 #include <TlHelp32.h>
 #include <stdint.h>
+#include <fstream>
+#include <string>
 
 DWORD dwLocalPlayer = 0xA9053C;
 DWORD oFlags = 0x00000100;
@@ -11,7 +13,9 @@ HANDLE hProcess = NULL;
 HWND hWindow = NULL;
 int vFlags;
 DWORD dwClientDLL;
-
+DWORD dwEngine;
+DWORD dwAngl = 0x4D0C;
+DWORD myAngl;
 DWORD aEntityList = 0x4AB1F54;
 DWORD oCrosshair = 0x0000AA64;
 DWORD oTeamNum = 0x000000F0;
@@ -19,10 +23,13 @@ DWORD oEntityLoopDist = 0x10;
 DWORD oHealth = 0x000000FC;
 DWORD dwForceAttack = 0x2EF1F40;
 DWORD m_vecOrigin = 0x00000134;
+DWORD m_vecVelocity  = 0x110;
 
 boolean trig = false;
 boolean bhop = false;
 bool shot = false;
+
+int TRIGGER_BUTTON = 0x47;
 
 bool InitializeProcessData( const std::string &strWindowTitle, HWND &hWindow, DWORD &dwProcessId, HANDLE &hProcess )
 {
@@ -118,11 +125,12 @@ struct MyPlayer
 		Team = ReadMemory<int>(LocalPlayer + oTeamNum);
 		Flags = ReadMemory<int>(LocalPlayer+ oFlags);
 		CrosshairID = ReadMemory<int>(LocalPlayer+ oCrosshair);
+
 	}
 	void bhop()
 	{
 		ReadInformation();
-		int vJump;
+		int vJump = 5;
 		if (GetAsyncKeyState(0x20))
 		{
 			if(Flags == 257)
@@ -143,26 +151,36 @@ struct MyPlayer
 		int enemyHealth;
 		int enemyTeam;
 		int myval = 5;
-
-		//float velo[3];
+		float pos[3];
 
 		ReadInformation();
 		enemyInCH = ReadMemory<DWORD>(dwClientDLL + aEntityList + ((CrosshairID - 1) * oEntityLoopDist));
 		enemyHealth = ReadMemory<DWORD>(enemyInCH + oHealth);
 		enemyTeam = ReadMemory<DWORD>(enemyInCH + oTeamNum);
-		if(GetAsyncKeyState(0x47) && Team != enemyTeam && enemyHealth > 0)
+		pos[0] = ReadMemory<float>(enemyInCH + m_vecOrigin); // X
+		pos[1] = ReadMemory<float>(enemyInCH + m_vecOrigin + 0x4); // Y
+		pos[2] = ReadMemory<float>(enemyInCH + m_vecOrigin + 0x8); // Z
+
+		if(GetAsyncKeyState(TRIGGER_BUTTON) && Team != enemyTeam && enemyHealth > 0)
 		{
 			WriteMemory(dwClientDLL + dwForceAttack, myval);
 			myval = 4;
 			Sleep(1);
 			WriteMemory(dwClientDLL + dwForceAttack, myval);
 			myval = 5;
+			//Sleep(1000);
 		}
 	}
 };
 
 int main( )
 {
+	std::ifstream ifs("config.txt");
+	std::string content( (std::istreambuf_iterator<char>(ifs) ),
+                       (std::istreambuf_iterator<char>()    ) );
+	std::cout << "CONFIG LOADED" << std::endl;
+	TRIGGER_BUTTON = std::stoi(content);
+
 	std::cout << "Waiting for Counter-Strike: Global Offensive...";
 
 	while( !InitializeProcessData( "Counter-Strike: Global Offensive", hWindow, dwProcessId, hProcess ) )
@@ -174,8 +192,10 @@ int main( )
 	std::cout << "ok!" << std::endl;
 
 	dwClientDLL = GetModuleBaseExternal( "client.dll", dwProcessId );
-	MODULEENTRY32 entry;
+	dwEngine = GetModuleBaseExternal("engine.dll", dwProcessId);
+	//MODULEENTRY32 entry;
 	std::cout << "found client.dll at 0x" << std::hex << dwClientDLL << std::endl;
+	std::cout << "found engine.dll at 0x" << std::hex << dwEngine << std::endl;
 	MyPlayer me;
 	me.ReadInformation();
 
@@ -207,11 +227,15 @@ int main( )
 			std::cout << "trigger: " << trig << std::endl;
 			Sleep(1000);
 		}
+		if (GetAsyncKeyState(0x72))
+		{
+			break;
+		}
 	}
 
 	CloseHandle( hProcess );
 
-	system( "pause" );
-
+	system( "cls" );
+	main();
 	return 1;
 }
