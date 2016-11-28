@@ -18,9 +18,9 @@ int main()
 
 	std::cout << "Found team: " <<  std::hex << localPLayer->Team << std::endl;
 	std::cout << "Found Flags: " <<  std::hex << localPLayer->Flags << std::endl;
+	
 	while (true)
 	{
-		// MAKE BUNNYHOP ONLY PRESS WHEN ONGROUND (CROUCHING?)
 		g_pMisc->BunnyHop();
 		Sleep(1);
 	}

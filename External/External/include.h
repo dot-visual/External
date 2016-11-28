@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <TlHelp32.h>
+#include <thread>
 
 #include "Misc.h"
 #include "Offsets.h"

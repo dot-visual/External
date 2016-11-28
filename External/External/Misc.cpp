@@ -4,19 +4,16 @@ Misc* g_pMisc = new Misc();
 
 void Misc::BunnyHop()
 {
+	int FL_ONGROUND = 257;
+	int FL_CROUCHING = 263;
 	localPLayer->ReadInformation();
-	int vJump = 5;
-	if (GetAsyncKeyState(0x20))
+	if(GetAsyncKeyState(0x20))
 	{
-		if(localPLayer->Flags == 257)
+		if(localPLayer->Flags == FL_ONGROUND || localPLayer->Flags == FL_CROUCHING  )
 		{
-			vJump = 5;
+			int vJump = 6;
+			procMem->WriteMemory<int>(offsets->dwClientDLL + offsets->dwForceJump, vJump);
 		}
-		if(localPLayer->Flags == 256)
-		{
-			vJump = 4;
-		}
-		procMem->WriteMemory<int>(offsets->dwClientDLL + offsets->dwForceJump, vJump);
 	}
 }
 
