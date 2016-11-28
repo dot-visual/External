@@ -1,27 +1,23 @@
-#pragma once
-#include "Misc.h"
-#include "ProcMemory.h"
+#include "include.h"
+
+Misc* g_pMisc = new Misc();
 
 void Misc::BunnyHop()
 {
-	/*
-					ProcMemory procMem;
-	CLocalPlayer localPlayer;
+	localPLayer->ReadInformation();
 	int vJump = 5;
 	if (GetAsyncKeyState(0x20))
 	{
-		if(localPlayer.Flags == 257)
+		if(localPLayer->Flags == 257)
 		{
 			vJump = 5;
 		}
-		if(localPlayer.Flags == 256)
+		if(localPLayer->Flags == 256)
 		{
 			vJump = 4;
 		}
-		procMem.WriteMemory<int>(dwClientDLL + dwForceJump, vJump);
+		procMem->WriteMemory<int>(offsets->dwClientDLL + offsets->dwForceJump, vJump);
 	}
-	*/
-
 }
 
 void Misc::SetBhop()

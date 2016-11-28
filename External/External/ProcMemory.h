@@ -1,35 +1,39 @@
-#pragma once
-#ifndef PROCMEM_H //If Not Defined
-#define PROCMEM_H //Define Now
-#include <Windows.h>
-#include <string>
+#ifndef PROCMEMORY_HEADER
+#define PROCMEMORY_HEADER
+#include "include.h"
 
 class ProcMemory
 {
-protected:
-	HANDLE hProcess;
 public:
 	ProcMemory();
 	~ProcMemory();
+	HANDLE hProcess;
+	bool ReadMemory(DWORD_PTR dwAddress, LPVOID lpBuffer, DWORD_PTR dwSize);
+	bool WriteMemory( DWORD_PTR dwAddress, LPCVOID lpBuffer, DWORD_PTR dwSize );
 
 	template<typename T>
-	T ReadMemory(DWORD Address)
+	T ReadMemory( DWORD_PTR dwAddress, const T& tDefault = T() )
 	{
-		T read;
-		ReadProcessMemory(hProcess, (PBYTE*) Address, &read, sizeof(T),0);
-		return read;
+		T tRet;
+
+		if(!ReadMemory( dwAddress, &tRet, sizeof( T ) ) )
+		{
+			return tDefault;
+		}
+
+		return tRet;
 	}
 
 	template<typename T>
-	void WriteMemory(DWORD Address, T Value)
+	bool WriteMemory( DWORD_PTR dwAddress, const T& tValue )
 	{
-		WriteProcessMemory(hProcess, (PBYTE*) Address, &Value, sizeof(T), 0);
+		return WriteMemory( dwAddress, &tValue, sizeof( T ) );
 	}
 
-	virtual bool InitializeProcessData(const std::string &strWindowTitle, HWND &hWindow, DWORD &dwProcessId, HANDLE &hProcess); 
+	virtual bool InitializeProcessData(const std::string &strWindowTitle, HWND &hWindow, DWORD &dwProcessId, HANDLE &hProcess);
 	virtual DWORD_PTR GetModuleBaseExternal(const std::string &strModuleName, const DWORD &dwProcessId);
 
 private:
 };
-extern ProcMemory procMem;
+extern ProcMemory* procMem;
 #endif

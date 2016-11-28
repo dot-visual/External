@@ -80,9 +80,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="Offsets.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="ProcMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include.h" />
     <ClInclude Include="Misc.h" />
     <ClInclude Include="Offsets.h" />
     <ClInclude Include="ProcMemory.h" />

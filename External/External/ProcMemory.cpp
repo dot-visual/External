@@ -1,7 +1,6 @@
-#include "ProcMemory.h"
-#include <Windows.h>
-#include <string>
-#include <TlHelp32.h>
+#include "include.h"
+
+ProcMemory* procMem = new ProcMemory();
 
 ProcMemory::ProcMemory(){
 	//Constructor For Class, Do Not Remove!
@@ -11,6 +10,20 @@ ProcMemory::~ProcMemory(){
 	//De-Constructor
 	//Clean Up! (Close Handle - Not Needed Anymore)
 	CloseHandle(ProcMemory::hProcess);
+}
+
+bool ProcMemory::ReadMemory( DWORD_PTR dwAddress, LPVOID lpBuffer, DWORD_PTR dwSize )
+{
+	SIZE_T Out = NULL;
+
+	return ( ReadProcessMemory( hProcess, ( LPCVOID )dwAddress, lpBuffer, dwSize, &Out ) == TRUE );
+}
+
+bool ProcMemory::WriteMemory( DWORD_PTR dwAddress, LPCVOID lpBuffer, DWORD_PTR dwSize )
+{
+	SIZE_T Out = NULL;
+
+	return ( WriteProcessMemory( hProcess, ( LPVOID )dwAddress, lpBuffer, dwSize, &Out ) == TRUE );
 }
 
 

@@ -1,4 +1,3 @@
-#pragma once
 
 class Misc
 {
@@ -10,3 +9,4 @@ public:
 private:
 	bool m_bhop;
 };
+extern Misc* g_pMisc;

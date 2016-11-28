@@ -1,22 +1,32 @@
-#pragma once
-#include <Windows.h>
+#ifndef OFFSETS_HEADER
+#define OFFSETS_HEADER
+#include "include.h"
 
-DWORD dwClientDLL;
-DWORD dwEngineDLL;
+class Offsets
+{
+public:
+	Offsets();
+	~Offsets();
 
-DWORD dwLocalPlayer = 0xA9053C;
-DWORD oFlags = 0x00000100;
-DWORD dwForceJump = 0x4F48A94;
-DWORD dwAngl = 0x4D0C;
-DWORD aEntityList = 0x4AB1F54;
-DWORD oCrosshair = 0x0000AA64;
-DWORD oTeamNum = 0x000000F0;
-DWORD oEntityLoopDist = 0x10;
-DWORD oHealth = 0x000000FC;
-DWORD dwForceAttack = 0x2EF1F40;
-DWORD m_vecOrigin = 0x00000134;
-DWORD m_vecVelocity  = 0x110;
+	DWORD dwClientDLL;
+	DWORD dwEngineDLL;
 
-DWORD dwProcessId = 0;
-HWND hWindow = NULL;
-HANDLE hProcess = NULL;
+	DWORD dwLocalPlayer;
+	DWORD oFlags;
+	DWORD dwForceJump;
+	DWORD dwAngl;
+	DWORD aEntityList;
+	DWORD oCrosshair;
+	DWORD oTeamNum;
+	DWORD oEntityLoopDist;
+	DWORD oHealth;
+	DWORD dwForceAttack;
+
+	DWORD dwProcessId;
+	HWND hWindow;
+private:
+};
+extern Offsets* offsets;
+
+
+#endif
