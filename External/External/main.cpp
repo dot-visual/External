@@ -22,6 +22,29 @@ int main()
 	while (true)
 	{
 		g_pMisc->BunnyHop();
+		g_pMisc->Triggerbot();
+		g_pMisc->Glow();
+
+		if (GetAsyncKeyState(VK_F1))
+		{
+			g_pMisc->SetBhop();
+			std::cout << "BHOP CHANGED" << std::endl;
+			Sleep(1000);
+		}
+		
+		if (GetAsyncKeyState(VK_F2))
+		{
+			g_pMisc->SetTrigger();
+			std::cout << "TRIGGER CHANGED" << std::endl;
+			Sleep(1000);
+		}
+		
+		if (GetAsyncKeyState(VK_F3))
+		{
+			g_pMisc->SetGlow();
+			std::cout << "GLOW CHANGED" << std::endl;
+			Sleep(1000);
+		}
 		Sleep(1);
 	}
 	int i;

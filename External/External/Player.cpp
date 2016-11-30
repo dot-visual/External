@@ -11,3 +11,8 @@ void CLocalPlayer::ReadInformation()
 		CrosshairID = procMem->ReadMemory<int>(Player + offsets->oCrosshair, CrosshairID);
 		
 }
+
+bool CPlayer::isAlive()
+{
+	return(CPlayer::Health > 1);
+}

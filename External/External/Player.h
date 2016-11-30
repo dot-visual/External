@@ -9,8 +9,24 @@ public:
 	int Flags;
 	float Position[3];
 	int CrosshairID;
+	DWORD enemyInCH;
 
 	void ReadInformation();
 
 };
 extern CLocalPlayer* localPLayer;
+
+class CPlayer
+{
+public:
+	DWORD Player;
+
+	int Health;
+	int Team;
+	float Position[3];
+
+	bool isAlive();
+
+private:
+
+};
