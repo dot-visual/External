@@ -14,12 +14,16 @@ public:
 	void Glow();
 	void SetGlow();
 	bool GetGlow();
+
+	void AutoPistol();
+	void NoFlash();
 	float GlowTerroristRed;
 	float GlowTerroristGreen;
 	float GlowTerroristBlue;
 	float GlowTerroristAlpha;
 	bool m_bRenderWhenOccluded;
 	bool m_bRenderWhenUnoccluded;
+
 
 private:
 	bool m_bhop;

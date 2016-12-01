@@ -21,6 +21,7 @@ public:
 	DWORD oEntityLoopDist;
 	DWORD oHealth;
 	DWORD dwForceAttack;
+	DWORD m_flFlashMaxAlpha;
 
 	DWORD dwProcessId;
 	HWND hWindow;

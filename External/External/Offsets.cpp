@@ -15,6 +15,7 @@ Offsets::Offsets()
 	dwForceAttack = 0x2F00DF4;
 	dwProcessId = 0;
 	hWindow = NULL;
+	m_flFlashMaxAlpha = 0xA304;
 }
 
 Offsets::~Offsets()

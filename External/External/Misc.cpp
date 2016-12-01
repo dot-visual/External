@@ -59,10 +59,11 @@ void Misc::Triggerbot()
 		enemyPlayer.Player = procMem->ReadMemory<DWORD>(offsets->dwClientDLL + offsets->aEntityList + ((localPLayer->CrosshairID - 1) * offsets->oEntityLoopDist), localPLayer->enemyInCH);
 		enemyPlayer.Health = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oHealth);
 		enemyPlayer.Team = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oTeamNum);
-		if(GetAsyncKeyState(6) && enemyPlayer.isAlive() && enemyPlayer.Team != localPLayer->Team)
+		if(GetAsyncKeyState(VK_RBUTTON) && enemyPlayer.isAlive() && enemyPlayer.Team != localPLayer->Team)
 		{
 			int vAtk = 6;
 			procMem->WriteMemory(offsets->dwClientDLL + offsets->dwForceAttack, vAtk);
+
 			Sleep(250);
 		}
 	}
@@ -89,6 +90,7 @@ void Misc::Glow()
 {
 	if(GetGlow())
 	{
+		//GlowStruct CTglow = {0.0f, 0.0f, 1.0f, 1.0f, true, false};
 		bool GlowActive = true;
 		bool GlowTeamCheck = true;
 		DWORD someOffset = 0x38;
@@ -105,7 +107,6 @@ void Misc::Glow()
 				switch (EntityBaseTeamID)	// 1 GoTV; 2 T; 3 CT
 			{
 				case 2:
-
 					procMem->WriteMemory<float>((glow_Pointer + ((glow_currentPlayerGlowIndex * someOffset) + 0x4)), GlowTerroristRed);
 					procMem->WriteMemory<float>((glow_Pointer + ((glow_currentPlayerGlowIndex * someOffset) + 0x8)), GlowTerroristGreen);
 					procMem->WriteMemory<float>((glow_Pointer + ((glow_currentPlayerGlowIndex * someOffset) + 0xC)), GlowTerroristBlue);
@@ -124,4 +125,19 @@ void Misc::Glow()
 			}
 		}
 	}
+}
+
+void Misc::AutoPistol()
+{
+	if (GetAsyncKeyState(VK_LBUTTON))
+	{
+		int atk = 6;
+		procMem->WriteMemory(offsets->dwClientDLL + offsets->dwForceAttack, atk);
+		Sleep(30);
+	}
+}
+
+void Misc::NoFlash()
+{
+	procMem->WriteMemory(localPLayer->Player + offsets->m_flFlashMaxAlpha, 0.f);
 }

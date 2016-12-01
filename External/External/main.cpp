@@ -24,6 +24,8 @@ int main()
 		g_pMisc->BunnyHop();
 		g_pMisc->Triggerbot();
 		g_pMisc->Glow();
+		g_pMisc->AutoPistol();
+		g_pMisc->NoFlash();
 
 		if (GetAsyncKeyState(VK_F1))
 		{
@@ -45,6 +47,11 @@ int main()
 			std::cout << "GLOW CHANGED" << std::endl;
 			Sleep(1000);
 		}
+		if (GetAsyncKeyState(VK_F4))
+		{
+			
+		}
+
 		Sleep(1);
 	}
 	int i;
