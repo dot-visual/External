@@ -15,6 +15,7 @@ void Misc::BunnyHop()
 			{
 				int vJump = 6;
 				procMem->WriteMemory<int>(offsets->dwClientDLL + offsets->dwForceJump, vJump);
+				Sleep(6);
 			}
 		}
 	}
@@ -59,11 +60,10 @@ void Misc::Triggerbot()
 		enemyPlayer.Player = procMem->ReadMemory<DWORD>(offsets->dwClientDLL + offsets->aEntityList + ((localPLayer->CrosshairID - 1) * offsets->oEntityLoopDist), localPLayer->enemyInCH);
 		enemyPlayer.Health = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oHealth);
 		enemyPlayer.Team = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oTeamNum);
-		if(GetAsyncKeyState(VK_RBUTTON) && enemyPlayer.isAlive() && enemyPlayer.Team != localPLayer->Team)
+		if(GetAsyncKeyState(6) && enemyPlayer.isAlive() && enemyPlayer.Team != localPLayer->Team)
 		{
 			int vAtk = 6;
 			procMem->WriteMemory(offsets->dwClientDLL + offsets->dwForceAttack, vAtk);
-
 			Sleep(250);
 		}
 	}
@@ -95,7 +95,7 @@ void Misc::Glow()
 		bool GlowTeamCheck = true;
 		DWORD someOffset = 0x38;
 		DWORD glow_Pointer;
-		glow_Pointer = procMem->ReadMemory(offsets->dwClientDLL + 0x4FD91C4, glow_Pointer);
+		glow_Pointer = procMem->ReadMemory(offsets->dwClientDLL + 0x4FE0694, glow_Pointer);
 
 		for (int i = 0; i < 32; i++)
 		{
