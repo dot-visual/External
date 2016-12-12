@@ -12,6 +12,7 @@ public:
 	DWORD dwEngineDLL;
 
 	DWORD dwLocalPlayer;
+	DWORD m_vecOrigin;
 	DWORD oFlags;
 	DWORD dwForceJump;
 	DWORD dwAngl;
@@ -22,6 +23,7 @@ public:
 	DWORD oHealth;
 	DWORD dwForceAttack;
 	DWORD m_flFlashMaxAlpha;
+	DWORD viewAngles;
 
 	DWORD dwProcessId;
 	HWND hWindow;

@@ -5,6 +5,7 @@ Offsets* offsets = new Offsets();
 Offsets::Offsets()
 {
 	dwLocalPlayer = 0xAA38E4;
+	m_vecOrigin = 0x134;
 	oFlags = 0x100;
 	dwForceJump = 0x4F5CA40;
 	aEntityList = 0x4AC5E94;
@@ -16,6 +17,7 @@ Offsets::Offsets()
 	dwProcessId = 0;
 	hWindow = NULL;
 	m_flFlashMaxAlpha = 0xA304;
+	viewAngles = 0x4D0C;
 }
 
 Offsets::~Offsets()

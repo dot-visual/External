@@ -6,6 +6,9 @@ void displayFuncs()
 	std::cout << "BHOP: " << g_pMisc->GetBhop() << std::endl;
 	std::cout << "TRIGGER: " << g_pMisc->GetTrigger() << std::endl;
 	std::cout << "GLOW " << g_pMisc->GetGlow() << std::endl;
+	std::cout << "ANG " << localPLayer->ViewAngles[0] << std::endl;
+	std::cout << "ANG " << localPLayer->ViewAngles[1] << std::endl;
+	std::cout << "ANG " << localPLayer->ViewAngles[2] << std::endl;
 }
 
 int main()
@@ -16,9 +19,9 @@ int main()
 		Sleep( 1000 );
 	}
 
-	offsets->dwEngineDLL = procMem->GetModuleBaseExternal("engine.dll", offsets->dwProcessId);
-	offsets->dwClientDLL = procMem->GetModuleBaseExternal("client.dll", offsets->dwProcessId);
 
+	offsets->dwClientDLL = procMem->GetModuleBaseExternal("client.dll", offsets->dwProcessId);
+		offsets->dwEngineDLL = procMem->GetModuleBaseExternal("engine.dll", offsets->dwProcessId);
 	std::cout << "Found engine.dll at 0x" << std::hex << offsets->dwEngineDLL << std::endl;
 	std::cout << "Found client.dll at 0x" << std::hex << offsets->dwClientDLL << std::endl;
 
@@ -62,8 +65,9 @@ int main()
 			system("cls");
 			displayFuncs();
 		}
-		if (GetAsyncKeyState(VK_F4))
+		if (GetAsyncKeyState(VK_RBUTTON))
 		{
+			g_pMisc->Aimbot();
 		}
 
 		Sleep(1);

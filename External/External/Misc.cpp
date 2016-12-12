@@ -2,6 +2,8 @@
 
 Misc* g_pMisc = new Misc();
 
+CPlayer players[32];
+
 void Misc::BunnyHop()
 {
 	if(GetBhop())
@@ -140,4 +142,89 @@ void Misc::AutoPistol()
 void Misc::NoFlash()
 {
 	procMem->WriteMemory(localPLayer->Player + offsets->m_flFlashMaxAlpha, 0.f);
+}
+
+void Misc::Aimbot()
+{
+	localPLayer->ReadInformation();
+	readshit();
+
+	int myIndex = closeEnt();
+	if(myIndex != 32)
+	{
+		float test[3];
+		test[0] = localPLayer->Position[0] + localPLayer->origin[0];
+		test[1] = localPLayer->Position[1] + localPLayer->origin[1];
+		test[2] = localPLayer->Position[2] + localPLayer->origin[2];
+		myCalcAngle(test, players[myIndex].bones, localPLayer->ViewAngles, players[myIndex].Flags);
+		DWORD off = 0x5C7574;
+		DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + off);
+
+		procMem->WriteMemory(dwAngPtr + offsets->viewAngles, localPLayer->ViewAngles);
+		//procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x4, localPLayer->ViewAngles[0]);
+		Sleep(1);
+	}
+}
+
+void Misc::myCalcAngle( float *src, float *dst, float *angles, int fFlags)
+{
+	double delta[3] = { (src[0]-dst[0]), (src[1]-dst[1]), (src[2]-dst[2]) };
+	double hyp = sqrt(delta[0]*delta[0] + delta[1]*delta[1]);
+	angles[0] = (float) (asinf(delta[2]/hyp) * 57.295779513082f);
+	angles[1] = (float) (atanf(delta[1]/delta[0]) * 57.295779513082f);
+	angles[2] = 0.0f;
+
+	if(delta[0] >= 0.0)
+	{
+		angles[1] += 180.0f;
+	}
+}
+
+void Misc::readshit()
+{
+	for (int i = 0; i < 64; i++)
+	{
+		players[i].Player = procMem->ReadMemory<DWORD>((offsets->dwClientDLL + offsets->aEntityList) + (i * 0x10));
+		DWORD bones;
+		if(!players[i].Player)
+			return;
+
+		players[i].Team = procMem->ReadMemory<int>(players[i].Player + offsets->oTeamNum);
+
+		if (players[i].Team != localPLayer->Team)
+		{
+			players[i].Position[0] = procMem->ReadMemory<float>(players[i].Player + offsets->m_vecOrigin);
+			players[i].Position[1] = procMem->ReadMemory<float>(players[i].Player + offsets->m_vecOrigin + 0x4);
+			players[i].Position[2] = procMem->ReadMemory<float>(players[i].Player + offsets->m_vecOrigin + 0x8);
+			players[i].Flags = procMem->ReadMemory<int>(players[i].Player + offsets->oFlags);
+			players[i].Health = procMem->ReadMemory<int>(players[i].Player + offsets->oHealth, players[i].Health);
+			bones = procMem->ReadMemory<DWORD>(players[i].Player + 0x2698);
+			players[i].bones[0] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0xC);
+			players[i].bones[1] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0x1C);
+			players[i].bones[2] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0x2C);
+		}
+	}
+}
+
+float Misc::closeEnt()
+{
+	float fLowest = 100000, TMP;
+	int iIndex;
+
+	for (int i = 0; i < 64; i++)
+	{
+		TMP = get3d(localPLayer->Position[0],localPLayer->Position[1], localPLayer->Position[2], players[i].Position[0],players[i].Position[1], players[i].Position[2]);
+
+		if(TMP < fLowest && (int)players[i].Health > 0)
+		{
+			fLowest = TMP;
+			iIndex = i;
+		}
+	}
+	return iIndex;
+}
+
+float Misc::get3d(float X, float Y, float Z, float eX, float eY, float eZ)
+{
+	return(sqrtf( (eX - X) * (eX - X) + (eY - Y) * (eY - Y) + (eZ - Z) * (eZ - Z)));
 }
