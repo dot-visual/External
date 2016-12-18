@@ -4,16 +4,16 @@ Offsets* offsets = new Offsets();
 
 Offsets::Offsets()
 {
-	dwLocalPlayer = 0xAA38E4;
+	dwLocalPlayer = 0xAA5834;
 	m_vecOrigin = 0x134;
 	oFlags = 0x100;
-	dwForceJump = 0x4F5CA40;
-	aEntityList = 0x4AC5E94;
+	dwForceJump = 0x4F5EB58;
+	aEntityList = 0x4AC8014;
 	oCrosshair = 0xAA70;
 	oTeamNum = 0xF0;
 	oEntityLoopDist = 0x10;
 	oHealth = 0xFC;
-	dwForceAttack = 0x2F06004;
+	dwForceAttack = 0x2F09364;
 	dwProcessId = 0;
 	hWindow = NULL;
 	m_flFlashMaxAlpha = 0xA304;

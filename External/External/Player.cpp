@@ -23,6 +23,7 @@ void CLocalPlayer::ReadInformation()
 	localBones[0] = procMem->ReadMemory<float>(baseBones + 0x30 * 10 + 0xC);
 	localBones[1] = procMem->ReadMemory<float>(baseBones + 0x30 * 10 + 0x1C);
 	localBones[2] = procMem->ReadMemory<float>(baseBones + 0x30 * 10 + 0x2C);
+	
 }
 
 bool CPlayer::isAlive()

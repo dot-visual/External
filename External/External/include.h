@@ -18,7 +18,7 @@
 #include <string>
 #include <TlHelp32.h>
 #include <thread>
-
+#include <vector>
 #include "Misc.h"
 #include "Offsets.h"
 #include "Player.h"
