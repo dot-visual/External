@@ -31,6 +31,7 @@ public:
 	float ViewAngles[3];
 	bool isAlive();
 	float bones[3];
+	int dormant;
 
 private:
 };

@@ -178,65 +178,59 @@ void Misc::Aimbot()
 	{
 		localPLayer->ReadInformation();
 		readshit();
-
-		int myIndex = closeEnt();
-		if(myIndex != 32)
+		if(closeEnt() >= 0)
 		{
-			float test[3];
-			test[0] = localPLayer->Position[0] + localPLayer->origin[0];
-			test[1] = localPLayer->Position[1] + localPLayer->origin[1];
-			test[2] = localPLayer->Position[2] + localPLayer->origin[2];
-			DWORD dwClientState = 0x5C7574;
-			DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
-			
-			float vorher[3];
-			vorher[0] = procMem->ReadMemory<float>(dwAngPtr + 0x4D0C, vorher[0]);
-			vorher[1] = procMem->ReadMemory<float>(dwAngPtr + 0x4D10, vorher[1]);
-			vorher[2] = procMem->ReadMemory<float>(dwAngPtr + 0x4D14, vorher[2]);
-
-			myCalcAngle(test, players[myIndex].bones, localPLayer->ViewAngles, players[myIndex].Flags);
-
-			if (GetAsyncKeyState(VK_RBUTTON))
+			int myIndex = closeEnt();
+			if(myIndex != 32)
 			{
-				RCS();
-				
-				procMem->WriteMemory(dwAngPtr + offsets->viewAngles, localPLayer->ViewAngles);
-				/*
-				procMem->WriteMemory(dwAngPtr + offsets->viewAngles, (localPLayer->ViewAngles[0] - viewPunchAngle[0]) * 1.97f);
-				procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x4, (localPLayer->ViewAngles[1] - viewPunchAngle[1]));
-				procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x8, (localPLayer->ViewAngles[2] - viewPunchAngle[2])* 1.97f);
-				*/
-				//mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
-				// use Sleep() here for shooting several shots with an ak for example. Not usable with pisto
-				//mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
-				// use Sleep() here for a 'cooldown' between shots.
+				float test[3];
+				test[0] = localPLayer->Position[0] + localPLayer->origin[0];
+				test[1] = localPLayer->Position[1] + localPLayer->origin[1];
+				test[2] = localPLayer->Position[2] + localPLayer->origin[2];
+				DWORD dwClientState = 0x5C7574;
+				DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
+
+				float vorher[3];
+				vorher[0] = procMem->ReadMemory<float>(dwAngPtr + 0x4D0C, vorher[0]);
+				vorher[1] = procMem->ReadMemory<float>(dwAngPtr + 0x4D10, vorher[1]);
+				vorher[2] = procMem->ReadMemory<float>(dwAngPtr + 0x4D14, vorher[2]);
+
+				myCalcAngle(test, players[myIndex].bones, localPLayer->ViewAngles, players[myIndex].Flags);
+
+				if (GetAsyncKeyState(VK_RBUTTON))
+				{
+					RCS();
+					clampAngl(localPLayer->ViewAngles);
+					SmoothAngle(vorher,localPLayer->ViewAngles);
+					clampAngl(localPLayer->ViewAngles);
+					procMem->WriteMemory(dwAngPtr + offsets->viewAngles, localPLayer->ViewAngles);
+					/*
+					procMem->WriteMemory(dwAngPtr + offsets->viewAngles, (localPLayer->ViewAngles[0] - viewPunchAngle[0]) * 1.97f);
+					procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x4, (localPLayer->ViewAngles[1] - viewPunchAngle[1]));
+					procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x8, (localPLayer->ViewAngles[2] - viewPunchAngle[2])* 1.97f);
+					*/
+					//mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
+					// use Sleep() here for shooting several shots with an ak for example. Not usable with pisto
+					//mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
+					// use Sleep() here for a 'cooldown' between shots.
+				}
+				Sleep(1);
 			}
-			Sleep(1);
 		}
 	}
 }
-
-void Misc::smoothAngle(float *src, float *dest)
+void Misc::SmoothAngle(float vecOld[3], float *vecNew)
 {
-	DWORD dwClientState = 0x5C7574;
-	DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
-	float x = src[0] - dest[0];
-	float y = src[1] - dest[1];
-	//angle[0] -= 100;
-	//angle[1] = 0;
-	//angle[1] -= 100;
-	for (int i = 0; i < 10; i++)
-	{
-		src[0] += x;
-		src[1] += y;
-		src[2] = 0;
-
-		procMem->WriteMemory(dwAngPtr + offsets->viewAngles, src);
-		Sleep(100);
-	}
+	vecNew[0] = (vecNew[0] - vecOld[0]);
+	vecNew[1] = (vecNew[1] - vecOld[1]);
+	vecNew[2] = (vecNew[2] - vecOld[2]);
+	clampAngl(vecNew);
+	vecNew[0] = vecNew[0] / 30.0f + vecOld[0];
+	vecNew[1] = vecNew[1] / 30.0f + vecOld[1];
+	vecNew[2] = vecNew[2] / 30.0f + vecOld[2];
 }
 
-void Misc::myCalcAngle( float *src, float *dst, float *angles, int fFlags)
+void Misc::myCalcAngle( float src[3], float *dst, float *angles, int fFlags)
 {
 	double delta[3] = { (src[0]-dst[0]), (src[1]-dst[1]), (src[2]-dst[2]) };
 	double hyp = sqrt(delta[0]*delta[0] + delta[1]* delta[1]);
@@ -248,21 +242,19 @@ void Misc::myCalcAngle( float *src, float *dst, float *angles, int fFlags)
 	{
 		angles[1] += 180.0f;
 	}
+	clampAngl(angles);
 }
 
 void Misc::clampAngl(float *ang)
 {
-	if( ang[0] > 180 )
-		ang[0] -= 360;
-
-	if( ang[0] < -180 )
-		ang[0] += 360;
-
-	if (ang[1] > 89.0f)
-		ang[1] = 89.0f;
-
-	if (ang[1] < -89.0f)
-		ang[1] = -89.0f;
+	if (ang[0] > 89.f)
+		ang[0] -= 360.f;
+	else if (ang[0] < -89.f)
+		ang[0] += 360.f;
+	if (ang[1] > 179.f)
+		ang[1] -= 360.f;
+	else if (ang[1] < -179.f)
+		ang[1] += 360.f;
 
 	ang[2] = 0;
 }
@@ -289,6 +281,7 @@ void Misc::readshit()
 			players[i].bones[0] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0xC);
 			players[i].bones[1] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0x1C);
 			players[i].bones[2] = procMem->ReadMemory<float>(bones + 0x30 * 8 + 0x2C);
+			players[i].dormant = procMem->ReadMemory<int>(players[i].Player + 0x939);
 		}
 	}
 }
@@ -297,12 +290,12 @@ float Misc::closeEnt()
 {
 	float fLowest = 100000, TMP;
 	int iIndex;
-
+	iIndex = -1;
 	for (int i = 0; i < 64; i++)
 	{
 		TMP = get3d(localPLayer->Position[0],localPLayer->Position[1], localPLayer->Position[2], players[i].Position[0],players[i].Position[1], players[i].Position[2]);
 
-		if(TMP < fLowest && (int)players[i].Health > 0)
+		if(TMP < fLowest && (int)players[i].Health > 0 && players[i].dormant == 1)
 		{
 			fLowest = TMP;
 			iIndex = i;

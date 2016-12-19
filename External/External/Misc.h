@@ -23,8 +23,7 @@ public:
 	void SetAimbot();
 	bool GetAimbot();
 
-	void smoothAngle(float *src, float *dest);
-
+	void SmoothAngle(float vecOld[3], float *vecNew);
 	void AutoPistol();
 	void NoFlash();
 	float GlowTerroristRed;
@@ -39,7 +38,7 @@ public:
 
 	void Reading(bool on);
 	void readshit();
-	void myCalcAngle(float *src, float *dst, float *angles, int fFlags);
+	void myCalcAngle(float src[3], float *dst, float *angles, int fFlags);
 	float closeEnt();
 	float get3d(float X, float Y, float Z, float eX, float eY, float eZ);
 	void clampAngl(float *ang);
