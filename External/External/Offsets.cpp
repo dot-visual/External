@@ -4,11 +4,11 @@ Offsets* offsets = new Offsets();
 
 Offsets::Offsets()
 {
-	dwLocalPlayer = 0xAA5834;
+	dwLocalPlayer = 0x00AA5834;
 	m_vecOrigin = 0x134;
 	oFlags = 0x100;
 	dwForceJump = 0x4F5EB58;
-	aEntityList = 0x4AC8014;
+	aEntityList = 0x04AC8014;
 	oCrosshair = 0xAA70;
 	oTeamNum = 0xF0;
 	oEntityLoopDist = 0x10;

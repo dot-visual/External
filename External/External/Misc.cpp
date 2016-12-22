@@ -187,7 +187,7 @@ void Misc::Aimbot()
 				test[0] = localPLayer->Position[0] + localPLayer->origin[0];
 				test[1] = localPLayer->Position[1] + localPLayer->origin[1];
 				test[2] = localPLayer->Position[2] + localPLayer->origin[2];
-				DWORD dwClientState = 0x5C7574;
+				DWORD dwClientState = 0x005C7524;
 				DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
 
 				float vorher[3];
@@ -225,9 +225,9 @@ void Misc::SmoothAngle(float vecOld[3], float *vecNew)
 	vecNew[1] = (vecNew[1] - vecOld[1]);
 	vecNew[2] = (vecNew[2] - vecOld[2]);
 	clampAngl(vecNew);
-	vecNew[0] = vecNew[0] / 30.0f + vecOld[0];
-	vecNew[1] = vecNew[1] / 30.0f + vecOld[1];
-	vecNew[2] = vecNew[2] / 30.0f + vecOld[2];
+	vecNew[0] = vecNew[0] / 35.0f + vecOld[0];
+	vecNew[1] = vecNew[1] / 35.0f + vecOld[1];
+	vecNew[2] = vecNew[2] / 35.0f + vecOld[2];
 }
 
 void Misc::myCalcAngle( float src[3], float *dst, float *angles, int fFlags)
@@ -315,7 +315,7 @@ void Misc::RCS()
 	{
 		int ShotsFired = procMem->ReadMemory<int>(localPLayer->Player + 0xA2C0);
 		if (ShotsFired > 1){
-			DWORD dwClientState = 0x5C7574;
+			DWORD dwClientState = 0x005C7524;
 			DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
 			float m_ViewAngle[3];
 			float m_PunchAngle[3];
