@@ -31,7 +31,7 @@ int main()
 	//std::cout << "Found team: " <<  std::hex << localPLayer->Team << std::endl;
 	//std::cout << "Found Flags: " <<  std::hex << localPLayer->Flags << std::endl;
 	int ingame;
-	DWORD dwClientState = 0x005C7524;
+	DWORD dwClientState = 0x5C75A4;
 	DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
 
 	ingame = procMem->ReadMemory(dwAngPtr + 0x100, ingame);

@@ -125,7 +125,7 @@ void Misc::Glow()
 		bool GlowTeamCheck = true;
 		DWORD someOffset = 0x38;
 		DWORD glow_Pointer;
-		glow_Pointer = procMem->ReadMemory(offsets->dwClientDLL + 0x4FE27B4, glow_Pointer);
+		glow_Pointer = procMem->ReadMemory(offsets->dwClientDLL + 0x4FE38C4, glow_Pointer);
 
 		for (int i = 0; i < 32; i++)
 		{
@@ -187,7 +187,8 @@ void Misc::Aimbot()
 				test[0] = localPLayer->Position[0] + localPLayer->origin[0];
 				test[1] = localPLayer->Position[1] + localPLayer->origin[1];
 				test[2] = localPLayer->Position[2] + localPLayer->origin[2];
-				DWORD dwClientState = 0x005C7524;
+
+				DWORD dwClientState = 0x5C75A4;
 				DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
 
 				float vorher[3];
@@ -195,24 +196,35 @@ void Misc::Aimbot()
 				vorher[1] = procMem->ReadMemory<float>(dwAngPtr + 0x4D10, vorher[1]);
 				vorher[2] = procMem->ReadMemory<float>(dwAngPtr + 0x4D14, vorher[2]);
 
-				myCalcAngle(test, players[myIndex].bones, localPLayer->ViewAngles, players[myIndex].Flags);
-
 				if (GetAsyncKeyState(VK_RBUTTON))
 				{
+					NormalizeAngles(localPLayer->ViewAngles);
+
+					myCalcAngle(test, players[myIndex].bones, localPLayer->ViewAngles, players[myIndex].Flags);
 					RCS();
-					clampAngl(localPLayer->ViewAngles);
+					clampAngl(vorher);
 					SmoothAngle(vorher,localPLayer->ViewAngles);
 					clampAngl(localPLayer->ViewAngles);
+					NormalizeAngles(localPLayer->ViewAngles);
 					procMem->WriteMemory(dwAngPtr + offsets->viewAngles, localPLayer->ViewAngles);
 					/*
 					procMem->WriteMemory(dwAngPtr + offsets->viewAngles, (localPLayer->ViewAngles[0] - viewPunchAngle[0]) * 1.97f);
 					procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x4, (localPLayer->ViewAngles[1] - viewPunchAngle[1]));
 					procMem->WriteMemory(dwAngPtr + offsets->viewAngles + 0x8, (localPLayer->ViewAngles[2] - viewPunchAngle[2])* 1.97f);
 					*/
-					//mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
-					// use Sleep() here for shooting several shots with an ak for example. Not usable with pisto
-					//mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
-					// use Sleep() here for a 'cooldown' between shots.
+
+					CPlayer enemyPlayer;
+					enemyPlayer.Player = procMem->ReadMemory<DWORD>(offsets->dwClientDLL + offsets->aEntityList + ((localPLayer->CrosshairID - 1) * offsets->oEntityLoopDist), localPLayer->enemyInCH);
+					enemyPlayer.Health = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oHealth);
+					enemyPlayer.Team = procMem->ReadMemory<int>(enemyPlayer.Player + offsets->oTeamNum);
+
+					if(enemyPlayer.Team != localPLayer->Team && enemyPlayer.Team > 0)
+					{
+						mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
+						// use Sleep() here for shooting several shots with an ak for example. Not usable with pisto
+						mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
+						// use Sleep() here for a 'cooldown' between shots.
+					}
 				}
 				Sleep(1);
 			}
@@ -228,13 +240,14 @@ void Misc::SmoothAngle(float vecOld[3], float *vecNew)
 	vecNew[0] = vecNew[0] / 35.0f + vecOld[0];
 	vecNew[1] = vecNew[1] / 35.0f + vecOld[1];
 	vecNew[2] = vecNew[2] / 35.0f + vecOld[2];
+	NormalizeAngles(vecNew);
 }
 
 void Misc::myCalcAngle( float src[3], float *dst, float *angles, int fFlags)
 {
 	double delta[3] = { (src[0]-dst[0]), (src[1]-dst[1]), (src[2]-dst[2]) };
 	double hyp = sqrt(delta[0]*delta[0] + delta[1]* delta[1]);
-	angles[0] = (float) (asinf(delta[2]/hyp) * 57.295779513082f);
+	angles[0] = (float) (atanf((delta[2]) /hyp) * 57.295779513082f);
 	angles[1] = (float) (atanf(delta[1]/delta[0]) * 57.295779513082f);
 	angles[2] = 0.0f;
 
@@ -245,15 +258,34 @@ void Misc::myCalcAngle( float src[3], float *dst, float *angles, int fFlags)
 	clampAngl(angles);
 }
 
+void Misc::NormalizeAngles(float *angles) {
+	for (int i = 0; i < 3; i++)
+	{
+		if (angles[i] > 180.0)
+		{
+			angles[i] -= 360.0;
+		}
+		else if (angles[i] < -180.0)
+		{
+			angles[i] += 360.0;
+		}
+	}
+
+	if(angles[0] > 89.0f)
+		angles[0]  = 89.0f;
+	else if(angles[0]  < -89.0f)
+		angles[0] = -89.0f;
+}
+
 void Misc::clampAngl(float *ang)
 {
 	if (ang[0] > 89.f)
 		ang[0] -= 360.f;
 	else if (ang[0] < -89.f)
 		ang[0] += 360.f;
-	if (ang[1] > 179.f)
+	if (ang[1] > 180.f)
 		ang[1] -= 360.f;
-	else if (ang[1] < -179.f)
+	else if (ang[1] < -180.f)
 		ang[1] += 360.f;
 
 	ang[2] = 0;
@@ -315,7 +347,7 @@ void Misc::RCS()
 	{
 		int ShotsFired = procMem->ReadMemory<int>(localPLayer->Player + 0xA2C0);
 		if (ShotsFired > 1){
-			DWORD dwClientState = 0x005C7524;
+			DWORD dwClientState = 0x5C75A4;
 			DWORD dwAngPtr = procMem->ReadMemory<DWORD>(offsets->dwEngineDLL + dwClientState);
 			float m_ViewAngle[3];
 			float m_PunchAngle[3];

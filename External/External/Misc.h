@@ -24,6 +24,7 @@ public:
 	bool GetAimbot();
 
 	void SmoothAngle(float vecOld[3], float *vecNew);
+	void NormalizeAngles(float *angles);
 	void AutoPistol();
 	void NoFlash();
 	float GlowTerroristRed;
