@@ -1,8 +1,8 @@
 #ifndef AIMBOT_HEADER
 #define AIMBOT_HEADER
 
-#include "../Includes.h"
-
+#include "../SDK/Player.h"
+#include "../Utils/Utils.h"
 class Aimbot
 {
 public:

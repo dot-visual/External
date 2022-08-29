@@ -1,8 +1,13 @@
 #ifndef UTILS_HEADER
 #define UTILS_HEADER
-#include "../Includes.h"
+#include <math.h>
+
+#define KEYCODE_RMB 0x01
+#define INVALID_INDEX -1
 
 namespace Utils {
+	bool isValidEnemyIndex(size_t index);
+	int ClosestEntIndexToPlayer();
 
 	enum TEAM {
 		TEAM_GOTV = 1,
@@ -156,6 +161,29 @@ namespace Utils {
 				&& y > -0.01f && y < 0.01f
 				&& z > -0.01f && z < 0.01f);
 		}
+	};
+
+	class Angle
+	{
+	public:
+		float pitch, yaw, roll;
+		Angle(float p_pitch, float p_yaw, float p_roll) :pitch(p_pitch), yaw(p_yaw), roll(p_roll) {};
+		Angle() : pitch(0), yaw(0), roll(0) {};
+
+		inline Angle operator-(const Angle& a) const
+		{
+			return Angle(yaw - a.yaw, pitch - a.pitch, roll - a.roll);
+		}
+
+		inline Angle operator*=(const Angle& a) const
+		{
+			return Angle(yaw * a.yaw, pitch * a.pitch, roll * a.roll);
+		}
+
+		//float length()
+		//{
+		//	return fabs(std::sqrtf(std::pow(yaw, 2) + std::pow(pitch, 2) + std::pow(roll, 2)));
+		//}
 	};
 }
 

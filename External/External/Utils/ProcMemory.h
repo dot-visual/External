@@ -1,8 +1,9 @@
 #ifndef PROCMEMORY_HEADER
 #define PROCMEMORY_HEADER
 
-#include "../Includes.h"
-
+#include <Windows.h>
+#include <TlHelp32.h>
+#include <string>
 //TODO: Use Singleton Design pattern
 
 class ProcMemory

@@ -1,10 +1,9 @@
 #ifndef OFFSETS_HEADER
 #define OFFSETS_HEADER
-#include "../Includes.h"
 
 namespace Offsets {
-	uintptr_t clientDll{};
-	uintptr_t engineDll{};
+	static uintptr_t clientDll{};
+	static uintptr_t engineDll{};
 	constexpr uintptr_t m_bGunGameImmunity = 0x0;
 	constexpr uintptr_t m_iTeamNum = 0x0;
 	constexpr uintptr_t m_iHealth = 0x100;

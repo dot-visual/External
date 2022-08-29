@@ -1,42 +1,41 @@
 #ifndef PLAYER_HEADER
 #define PLAYER_HEADER
 
-#include "../Includes.h"
+#include <vector>
+#include <Windows.h>
+#include "../Utils/Utils.h"
+#include "../SDK/Offsets.h"
+#include "../Utils/ProcMemory.h"
 
 class Player {
-	Player() = delete;
+public:
 	Player(uintptr_t playerBase);
+	[[nodiscard]] uintptr_t getAddress() const;
 
-	[[nodiscard]] bool isImmune() const;
 	[[nodiscard]] bool isAlive() const;
-	[[nodiscard]] unsigned int getTeam() const;
-	[[nodiscard]] Utils::Vector3 getPosition() const;
 	[[nodiscard]] bool isDormant() const;
+	[[nodiscard]] bool isImmune() const;
+	[[nodiscard]] bool isLocalPlayer() const;
+	[[nodiscard]] int getFlags() const;
+	[[nodiscard]] UINT getTeam() const;
+	[[nodiscard]] int getHealth() const;
+	[[nodiscard]] Utils::Vector3 getEyePos() const;
+	[[nodiscard]] Utils::Vector3 getPos() const;
+	[[nodiscard]] Utils::Vector3 getPosition() const;
 
-private:
+protected:
+	Player() = default;
 	uintptr_t playerBaseAddr{};
 };
 
-class LocalPlayer {
+class LocalPlayer : public Player {
 public:
-	static LocalPlayer& GetInstance();
-
-	uintptr_t getAddress() const;
-	int getHealth() const;
-	int getFlags() const;
-	Utils::Vector3 getPos() const;
-	Utils::Vector3 getEyePos() const;
-	Utils::Vector3 getViewAngle() const;
-
-
-	// Delete copy/move so extra instances can't be created/moved.
-	LocalPlayer(const LocalPlayer&) = delete;
-	LocalPlayer& operator=(const LocalPlayer&) = delete;
-	LocalPlayer(LocalPlayer&&) = delete;
-	LocalPlayer& operator=(LocalPlayer&&) = delete;
+	LocalPlayer();
+	[[nodiscard]] Utils::Angle getViewAngles() const;
 
 private:
-	LocalPlayer() = default;
+	//LocalPlayer() = default;
 };
-
+extern LocalPlayer* localPlayer;
+extern std::vector<Player*> entityList;
 #endif // !PLAYER_HEADER

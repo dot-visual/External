@@ -42,8 +42,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,10 +89,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\ProcMemory.cpp" />
     <ClCompile Include="SDK\Player.cpp" />
+    <ClCompile Include="Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Features\Aimbot.h" />
-    <ClInclude Include="Includes.h" />
     <ClInclude Include="SDK\Offsets.h" />
     <ClInclude Include="Utils\ProcMemory.h" />
     <ClInclude Include="SDK\Player.h" />

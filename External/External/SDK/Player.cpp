@@ -1,5 +1,8 @@
 #include "Player.h"
 
+LocalPlayer* localPlayer;
+std::vector<Player*> entityList{};
+
 Player::Player(uintptr_t playerBase) : playerBaseAddr(playerBase) {}
 
 [[nodiscard]] bool Player::isImmune() const {
@@ -22,40 +25,37 @@ Player::Player(uintptr_t playerBase) : playerBaseAddr(playerBase) {}
 	return procMem->ReadMemory<Utils::Vector3>(playerBaseAddr + Offsets::m_vecOrigin);
 }
 
-LocalPlayer& LocalPlayer::GetInstance()
-{
-	static LocalPlayer instance;
-	return instance;
+[[nodiscard]] int Player::getHealth() const {
+	return procMem->ReadMemory<int>(this->playerBaseAddr + Offsets::m_iHealth);
 }
 
-[[nodiscard]] uintptr_t LocalPlayer::getAddress() const {
-	return procMem->ReadMemory<uintptr_t>(Offsets::clientDll + Offsets::dwLocalPlayer);
-}
-//int getHealth() const;
-//int getFlags() const;
-//Utils::Vector3 getPos() const;
-//Utils::Vector3 getEyePos() const;
-//Utils::Vector3 getViewAngle() const;
-
-[[nodiscard]] int LocalPlayer::getHealth() const {
-	return procMem->ReadMemory<int>(Offsets::dwLocalPlayer + Offsets::m_iHealth);
+[[nodiscard]] int Player::getFlags() const {
+	return procMem->ReadMemory<int>(this->playerBaseAddr + Offsets::m_fFlags);
 }
 
-[[nodiscard]] int LocalPlayer::getFlags() const {
-	return procMem->ReadMemory<int>(Offsets::dwLocalPlayer + Offsets::m_fFlags);
+[[nodiscard]] Utils::Vector3 Player::getPos() const {
+	return procMem->ReadMemory<Utils::Vector3>(this->playerBaseAddr + Offsets::m_vecOrigin);
 }
 
-[[nodiscard]] Utils::Vector3 LocalPlayer::getPos() const {
-	return procMem->ReadMemory<Utils::Vector3>(Offsets::dwLocalPlayer + Offsets::m_vecOrigin);
-}
-
-[[nodiscard]] Utils::Vector3 LocalPlayer::getEyePos() const {
+[[nodiscard]] Utils::Vector3 Player::getEyePos() const {
 	auto position = this->getPos();
-	auto viewOffset = procMem->ReadMemory<Utils::Vector3>(Offsets::dwLocalPlayer + Offsets::m_vecViewOffset);
+	auto viewOffset = procMem->ReadMemory<Utils::Vector3>(this->playerBaseAddr + Offsets::m_vecViewOffset);
 	return position + viewOffset;
 }
 
-[[nodiscard]] Utils::Vector3 LocalPlayer::getViewAngle() const {
+[[nodiscard]] uintptr_t Player::getAddress() const {
+	return this->playerBaseAddr;
+}
+
+[[nodiscard]] bool Player::isLocalPlayer() const {
+	return procMem->ReadMemory<bool>(playerBaseAddr + Offsets::m_bIsLocalPlayer);
+}
+
+LocalPlayer::LocalPlayer() {
+	this->playerBaseAddr = procMem->ReadMemory<uintptr_t>(Offsets::clientDll + Offsets::dwLocalPlayer);
+}
+
+[[nodiscard]] Utils::Angle LocalPlayer::getViewAngles() const {
 	auto clientState = procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
-	return procMem->ReadMemory<Utils::Vector3>(clientState + Offsets::dwClientState_ViewAngles);
+	return procMem->ReadMemory<Utils::Angle>(clientState + Offsets::dwClientState_ViewAngles);
 }
