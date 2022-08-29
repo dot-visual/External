@@ -4,8 +4,8 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
-//TODO: Use Singleton Design pattern
 
+// Don't know anymore whom I copied this from 6 years ago, sorry
 class ProcMemory
 {
 public:
@@ -35,8 +35,8 @@ public:
 		return WriteMemory(dwAddress, &tValue, sizeof(T));
 	}
 
-	virtual bool InitializeProcessData(const std::string& strWindowTitle, HWND& hWindow, DWORD& dwProcessId, HANDLE& hProcess);
-	virtual DWORD_PTR GetModuleBaseExternal(const std::string& strModuleName, const DWORD& dwProcessId);
+	bool InitializeProcessData(const std::string& strWindowTitle, HWND& hWindow, DWORD& dwProcessId, HANDLE& hProcess);
+	DWORD_PTR GetModuleBaseExternal(const std::string& strModuleName, const DWORD& dwProcessId);
 
 private:
 };
