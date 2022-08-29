@@ -9,11 +9,11 @@ public:
 	Aimbot() = default;
 
 	void run();
-	void SetAimbot(bool state);
-	[[nodiscard]] bool GetAimbot() const;
-
+	void setAimbot(bool state);
+	[[nodiscard]] bool getAimbot() const;
 private:
 	bool enabled{ false };
+	[[nodiscard]] Utils::Angle calcAngleTo(Utils::Vector3 dst);
 };
 
 #endif

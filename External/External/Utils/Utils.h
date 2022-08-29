@@ -2,12 +2,26 @@
 #define UTILS_HEADER
 #include <math.h>
 
+#define M_PI           3.14159265358979323846  /* pi */
 #define KEYCODE_RMB 0x01
 #define INVALID_INDEX -1
 
 namespace Utils {
-	bool isValidEnemyIndex(size_t index);
+	bool IsValidEnemyIndex(size_t index);
 	int ClosestEntIndexToPlayer();
+	uintptr_t GetEntityAddrInCrosshair();
+
+	template <typename T>
+	T RadToDegrees(T rad)
+	{
+		return (rad * 180 / M_PI);
+	}
+
+	template <typename T>
+	T DegreesToRad(T deg)
+	{
+		return (deg * M_PI / 180);
+	}
 
 	enum TEAM {
 		TEAM_GOTV = 1,

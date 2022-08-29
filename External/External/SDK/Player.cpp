@@ -59,3 +59,15 @@ LocalPlayer::LocalPlayer() {
 	auto clientState = procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
 	return procMem->ReadMemory<Utils::Angle>(clientState + Offsets::dwClientState_ViewAngles);
 }
+void LocalPlayer::setViewAngles(Utils::Angle angles) const {
+	auto clientState = procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
+	procMem->WriteMemory<Utils::Angle>(clientState + Offsets::dwClientState_ViewAngles, angles);
+}
+
+void LocalPlayer::shoot() const {
+	procMem->WriteMemory<int>(Offsets::clientDll + Offsets::dwForceAttack, 1);
+}
+
+[[nodiscard]] int LocalPlayer::getCrosshairID() const {
+	return procMem->ReadMemory<int>(playerBaseAddr + Offsets::m_iCrosshairId);
+}

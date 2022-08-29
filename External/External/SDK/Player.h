@@ -31,8 +31,11 @@ protected:
 class LocalPlayer : public Player {
 public:
 	LocalPlayer();
-	[[nodiscard]] Utils::Angle getViewAngles() const;
 
+	void shoot() const;
+	[[nodiscard]] int getCrosshairID() const;
+	[[nodiscard]] Utils::Angle getViewAngles() const;
+	void setViewAngles(Utils::Angle angles) const;
 private:
 	//LocalPlayer() = default;
 };

@@ -4,7 +4,11 @@
 
 namespace Utils {
 
-	bool isValidEnemyIndex(size_t index) {
+	uintptr_t GetEntityAddrInCrosshair() {
+		return procMem->ReadMemory<uintptr_t>(Offsets::clientDll + Offsets::dwEntityList + ((localPlayer->getCrosshairID() - 1) * Offsets::entityLoopDist));
+	}
+
+	bool IsValidEnemyIndex(size_t index) {
 		return	(entityList[index]->isAlive()) &&
 				(!entityList[index]->isLocalPlayer()) &&
 				(entityList[index]->getTeam() != localPlayer->getTeam());
@@ -17,7 +21,7 @@ namespace Utils {
 		float leastDistance = FLT_MAX;
 		int bestIndex = INVALID_INDEX;
 		for (size_t i = 0; i < maxPlayers; i++) {
-			if (!isValidEnemyIndex(i))
+			if (!IsValidEnemyIndex(i))
 				continue;
 
 			auto hyp = localPlayer->getPos() - entityList[i]->getPos();
