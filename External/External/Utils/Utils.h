@@ -1,27 +1,22 @@
 #ifndef UTILS_HEADER
 #define UTILS_HEADER
 #include <math.h>
-#include "../SDK/Player.h"
 
 #define M_PI           3.14159265358979323846  /* pi */
 #define INVALID_INDEX -1
 
 namespace Utils {
 	bool IsValidEnemyIndex(size_t index);
-	bool IsValidEnemy(Player player);
 	int ClosestEntIndexToPlayer();
-	uintptr_t GetEntityAddrInCrosshair();
 
 	template <typename T>
-	T RadToDegrees(T rad)
-	{
-		return (rad * 180 / M_PI);
+	T RadToDegrees(T rad) {
+		return static_cast<T>((rad * 180 / M_PI));
 	}
 
 	template <typename T>
-	T DegreesToRad(T deg)
-	{
-		return (deg * M_PI / 180);
+	T DegreesToRad(T deg) {
+		return static_cast<T>((deg * M_PI / 180));
 	}
 
 	enum TEAM {
@@ -194,11 +189,6 @@ namespace Utils {
 		{
 			return Angle(yaw * a.yaw, pitch * a.pitch, roll * a.roll);
 		}
-
-		//float length()
-		//{
-		//	return fabs(std::sqrtf(std::pow(yaw, 2) + std::pow(pitch, 2) + std::pow(roll, 2)));
-		//}
 	};
 }
 

@@ -2,6 +2,12 @@
 #include "../SDK/Player.h"
 #include "../Utils/Utils.h"
 
+#define INVOKE_ONCE 6
+
+
+Bhop bhop;
+TriggerBot triggerBot;
+
 bool Feature::isEnabled() const {
 	return state;
 }
@@ -21,20 +27,16 @@ void Bhop::run() {
 	if (flags != Utils::FL_ONGROUND && flags != Utils::FL_CROUCHING)
 		return;
 
-	// 6 stands for "invoke once"
-	procMem->WriteMemory<int>(Offsets::clientDll + Offsets::dwForceJump, 6);
+	procMem->WriteMemory<int>(Offsets::clientDll + Offsets::dwForceJump, INVOKE_ONCE);
 }
 
 void TriggerBot::run() {
 	if (!this->isEnabled())
 		return;
-
-	auto crosshairEnt = Player(Utils::GetEntityAddrInCrosshair());
-	if (!Utils::IsValidEnemy(crosshairEnt))
+	if (!localPlayer->getEntityInCrosshair().IsValidEnemy())
 		return;
 	if (!GetAsyncKeyState(VK_XBUTTON2))
 		return;
 
-	// 6 stands for "invoke once"
-	procMem->WriteMemory(Offsets::clientDll + Offsets::dwForceAttack, 6);
+	procMem->WriteMemory(Offsets::clientDll + Offsets::dwForceAttack, INVOKE_ONCE);
 }

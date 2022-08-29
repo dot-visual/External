@@ -1,5 +1,7 @@
 #include "Aimbot.h"
 
+Aimbot aimbot;
+
 void Aimbot::setAimbot(bool state) {
 	this->enabled = state;
 }
@@ -21,7 +23,7 @@ void Aimbot::run() {
 
 	auto destAngles = calcAngleTo(entityList[bestEntInd]->getEyePos());
 	localPlayer->setViewAngles(destAngles);
-	if (Utils::GetEntityAddrInCrosshair() == entityList[bestEntInd]->getAddress()) {
+	if (localPlayer->getEntityInCrosshair().getAddress() == entityList[bestEntInd]->getAddress()) {
 		localPlayer->shoot();
 	}
 }
@@ -32,8 +34,8 @@ Utils::Angle Aimbot::calcAngleTo(Utils::Vector3 dst) {
 	delta.z *= -1;
 
 	Utils::Angle returnAngle;
-	returnAngle.yaw = Utils::RadToDegrees(atanf(delta.z / hyp));
-	returnAngle.pitch = Utils::RadToDegrees(atanf(delta.y / delta.x));
+	returnAngle.yaw = Utils::RadToDegrees<float>(atanf(delta.z / hyp));
+	returnAngle.pitch = Utils::RadToDegrees<float>(atanf(delta.y / delta.x));
 
 	if (delta.x < 0)
 		returnAngle.pitch += 180;

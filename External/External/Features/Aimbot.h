@@ -7,13 +7,14 @@ class Aimbot
 {
 public:
 	Aimbot() = default;
-
 	void run();
 	void setAimbot(bool state);
 	[[nodiscard]] bool getAimbot() const;
+
 private:
-	bool enabled{ false };
+	bool enabled { true };
 	[[nodiscard]] Utils::Angle calcAngleTo(Utils::Vector3 dst);
 };
 
+extern Aimbot aimbot;
 #endif

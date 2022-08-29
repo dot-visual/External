@@ -13,7 +13,7 @@ Player::Player(uintptr_t playerBase) : playerBaseAddr(playerBase) {}
 	return procMem->ReadMemory<int>(playerBaseAddr + Offsets::m_iHealth) > 1;
 }
 
-[[nodiscard]] unsigned int Player::getTeam() const {
+[[nodiscard]] UINT Player::getTeam() const {
 	return procMem->ReadMemory<unsigned int>(playerBaseAddr + Offsets::m_iTeamNum);
 }
 
@@ -51,6 +51,12 @@ Player::Player(uintptr_t playerBase) : playerBaseAddr(playerBase) {}
 	return procMem->ReadMemory<bool>(playerBaseAddr + Offsets::m_bIsLocalPlayer);
 }
 
+[[nodiscard]] bool Player::IsValidEnemy() const {
+	return	(this->isAlive()) &&
+		(!this->isLocalPlayer()) &&
+		(this->getTeam() != localPlayer->getTeam());
+}
+
 LocalPlayer::LocalPlayer() {
 	this->playerBaseAddr = procMem->ReadMemory<uintptr_t>(Offsets::clientDll + Offsets::dwLocalPlayer);
 }
@@ -70,4 +76,9 @@ void LocalPlayer::shoot() const {
 
 [[nodiscard]] int LocalPlayer::getCrosshairID() const {
 	return procMem->ReadMemory<int>(playerBaseAddr + Offsets::m_iCrosshairId);
+}
+
+[[nodiscard]] Player LocalPlayer::getEntityInCrosshair() const {
+	auto playerAddr = procMem->ReadMemory<uintptr_t>(Offsets::clientDll + Offsets::dwEntityList + ((localPlayer->getCrosshairID() - 1) * Offsets::entityLoopDist));
+	return Player(playerAddr);
 }

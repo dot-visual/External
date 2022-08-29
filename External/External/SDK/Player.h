@@ -16,6 +16,7 @@ public:
 	[[nodiscard]] bool isDormant() const;
 	[[nodiscard]] bool isImmune() const;
 	[[nodiscard]] bool isLocalPlayer() const;
+	[[nodiscard]] bool IsValidEnemy() const;
 	[[nodiscard]] int getFlags() const;
 	[[nodiscard]] UINT getTeam() const;
 	[[nodiscard]] int getHealth() const;
@@ -31,14 +32,13 @@ protected:
 class LocalPlayer : public Player {
 public:
 	LocalPlayer();
-
 	void shoot() const;
 	[[nodiscard]] int getCrosshairID() const;
 	[[nodiscard]] Utils::Angle getViewAngles() const;
+	[[nodiscard]] Player getEntityInCrosshair() const;
 	void setViewAngles(Utils::Angle angles) const;
-private:
-	//LocalPlayer() = default;
 };
 extern LocalPlayer* localPlayer;
 extern std::vector<Player*> entityList;
+
 #endif // !PLAYER_HEADER
