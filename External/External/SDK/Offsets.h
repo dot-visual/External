@@ -15,6 +15,7 @@ namespace Offsets {
 	constexpr uintptr_t m_bIsLocalPlayer = 0x3628;
 	constexpr uintptr_t m_iCrosshairId = 0x11838;
 	constexpr uintptr_t dwLocalPlayer = 0xDC14BC;
+	constexpr uintptr_t dwForceJump = 0xD21;
 	constexpr uintptr_t dwEntityList = 0x4DDD92C;
 	constexpr uintptr_t dwForceAttack = 0x320DE4C;
 	constexpr uintptr_t dwClientState = 0x58CFDC;

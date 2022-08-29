@@ -1,6 +1,5 @@
 #include "Utils.h"
 #include "ProcMemory.h"
-#include "../SDK/Player.h"
 
 namespace Utils {
 
@@ -12,6 +11,12 @@ namespace Utils {
 		return	(entityList[index]->isAlive()) &&
 				(!entityList[index]->isLocalPlayer()) &&
 				(entityList[index]->getTeam() != localPlayer->getTeam());
+	}
+
+	bool IsValidEnemy(Player& player) {
+		return	(player.isAlive()) &&
+			(!player.isLocalPlayer()) &&
+			(player.getTeam() != localPlayer->getTeam());
 	}
 
 	int ClosestEntIndexToPlayer() {

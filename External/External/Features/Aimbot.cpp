@@ -9,17 +9,20 @@ void Aimbot::setAimbot(bool state) {
 }
 
 void Aimbot::run() {
-	if (enabled && GetAsyncKeyState(KEYCODE_RMB)) {
-		int bestEntInd = Utils::ClosestEntIndexToPlayer();
+	if (!enabled)
+		return;
 
-		if (bestEntInd == INVALID_INDEX)
-			return;
+	if (!GetAsyncKeyState(VK_LBUTTON))
+		return;
 
-		auto destAngles = calcAngleTo(entityList[bestEntInd]->getEyePos());
-		localPlayer->setViewAngles(destAngles);
-		if (Utils::GetEntityAddrInCrosshair() == entityList[bestEntInd]->getAddress()) {
-			localPlayer->shoot();
-		}
+	int bestEntInd = Utils::ClosestEntIndexToPlayer();
+	if (bestEntInd == INVALID_INDEX)
+		return;
+
+	auto destAngles = calcAngleTo(entityList[bestEntInd]->getEyePos());
+	localPlayer->setViewAngles(destAngles);
+	if (Utils::GetEntityAddrInCrosshair() == entityList[bestEntInd]->getAddress()) {
+		localPlayer->shoot();
 	}
 }
 

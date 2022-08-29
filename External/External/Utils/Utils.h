@@ -1,13 +1,14 @@
 #ifndef UTILS_HEADER
 #define UTILS_HEADER
 #include <math.h>
+#include "../SDK/Player.h"
 
 #define M_PI           3.14159265358979323846  /* pi */
-#define KEYCODE_RMB 0x01
 #define INVALID_INDEX -1
 
 namespace Utils {
 	bool IsValidEnemyIndex(size_t index);
+	bool IsValidEnemy(Player player);
 	int ClosestEntIndexToPlayer();
 	uintptr_t GetEntityAddrInCrosshair();
 

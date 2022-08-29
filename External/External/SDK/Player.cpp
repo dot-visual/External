@@ -65,7 +65,7 @@ void LocalPlayer::setViewAngles(Utils::Angle angles) const {
 }
 
 void LocalPlayer::shoot() const {
-	procMem->WriteMemory<int>(Offsets::clientDll + Offsets::dwForceAttack, 1);
+	procMem->WriteMemory<int>(Offsets::clientDll + Offsets::dwForceAttack, 6);
 }
 
 [[nodiscard]] int LocalPlayer::getCrosshairID() const {
