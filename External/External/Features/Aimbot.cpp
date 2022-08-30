@@ -1,23 +1,19 @@
 #include "Aimbot.h"
+#include "../SDK/Helper.h"
 
 Aimbot aimbot;
 
-void Aimbot::setAimbot(bool state) {
-	this->enabled = state;
-}
-
-[[nodiscard]] bool Aimbot::getAimbot() const {
-	return this->enabled;
+std::string_view Aimbot::getName() const {
+	return this->name;
 }
 
 void Aimbot::run() {
-	if (!enabled)
+	if (!isEnabled())
 		return;
-
 	if (!GetAsyncKeyState(VK_LBUTTON))
 		return;
 
-	int bestEntInd = Utils::ClosestEntIndexToPlayer();
+	int bestEntInd = Helper::ClosestEntIndexToPlayer();
 	if (bestEntInd == INVALID_INDEX)
 		return;
 

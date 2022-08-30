@@ -3,16 +3,16 @@
 
 #include "../SDK/Player.h"
 #include "../Utils/Utils.h"
-class Aimbot
+#include "../Features/Feature.h"
+
+class Aimbot : public Feature
 {
 public:
 	Aimbot() = default;
-	void run();
-	void setAimbot(bool state);
-	[[nodiscard]] bool getAimbot() const;
-
+	void run() override;
+	[[nodiscard]] std::string_view getName() const override;
 private:
-	bool enabled { true };
+	std::string_view name = "Aimbot";
 	[[nodiscard]] Utils::Angle calcAngleTo(Utils::Vector3 dst);
 };
 

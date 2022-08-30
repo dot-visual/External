@@ -4,16 +4,15 @@
 
 #define INVOKE_ONCE 6
 
-
 Bhop bhop;
 TriggerBot triggerBot;
 
-bool Feature::isEnabled() const {
-	return state;
+std::string_view Bhop::getName() const {
+	return this->name;
 }
 
-void Feature::toggle() {
-	state = !state;
+std::string_view TriggerBot::getName() const {
+	return this->name;
 }
 
 void Bhop::run() {

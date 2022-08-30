@@ -6,18 +6,18 @@
 #define INVALID_INDEX -1
 
 namespace Utils {
-	bool IsValidEnemyIndex(size_t index);
-	int ClosestEntIndexToPlayer();
 
-	template <typename T>
-	T RadToDegrees(T rad) {
-		return static_cast<T>((rad * 180 / M_PI));
-	}
-
-	template <typename T>
-	T DegreesToRad(T deg) {
-		return static_cast<T>((deg * M_PI / 180));
-	}
+	enum SIGNONSTATE
+	{
+		SIGNONSTATE_NONE = 0,
+		SIGNONSTATE_CHALLENGE = 1,
+		SIGNONSTATE_CONNECTED = 2,
+		SIGNONSTATE_NEW = 3,
+		SIGNONSTATE_PRESPAWN = 4,
+		SIGNONSTATE_SPAWN = 5,
+		SIGNONSTATE_FULL = 6,
+		SIGNONSTATE_CHANGELEVEL = 7
+	};
 
 	enum TEAM {
 		TEAM_GOTV = 1,
@@ -29,6 +29,16 @@ namespace Utils {
 		FL_ONGROUND = 257,
 		FL_CROUCHING = 263
 	};
+
+	template <typename T>
+	T RadToDegrees(T rad) {
+		return static_cast<T>((rad * 180 / M_PI));
+	}
+
+	template <typename T>
+	T DegreesToRad(T deg) {
+		return static_cast<T>((deg * M_PI / 180));
+	}
 
 	class Vector3 {
 	public:

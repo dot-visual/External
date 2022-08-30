@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Helper.h"
 
 LocalPlayer* localPlayer;
 std::vector<Player*> entityList{};
@@ -62,7 +63,7 @@ LocalPlayer::LocalPlayer() {
 }
 
 [[nodiscard]] Utils::Angle LocalPlayer::getViewAngles() const {
-	auto clientState = procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
+	auto clientState = Helper::GetClientState();
 	return procMem->ReadMemory<Utils::Angle>(clientState + Offsets::dwClientState_ViewAngles);
 }
 void LocalPlayer::setViewAngles(Utils::Angle angles) const {

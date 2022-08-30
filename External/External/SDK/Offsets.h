@@ -19,6 +19,7 @@ namespace Offsets {
 	constexpr uintptr_t dwEntityList = 0x4DDD92C;
 	constexpr uintptr_t dwForceAttack = 0x320DE4C;
 	constexpr uintptr_t dwClientState = 0x58CFDC;
+	constexpr uintptr_t dwClientState_State = 0x42123;
 	constexpr uintptr_t dwClientState_GetLocalPlayer = 0x180;
 	constexpr uintptr_t dwClientState_ViewAngles = 0x4D90;
 	constexpr uintptr_t dwClientState_MaxPlayer = 0x388;

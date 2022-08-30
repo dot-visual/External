@@ -1,18 +1,21 @@
-#include "Utils.h"
-#include "ProcMemory.h"
-#include "../SDK/Offsets.h"
+#include "Helper.h"
 #include "../SDK/Player.h"
+#include "../Utils/Utils.h"
 
-namespace Utils {
+namespace Helper {
+	uintptr_t GetClientState() {
+		return  procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
+	}
+
 	bool IsValidEnemyIndex(size_t index) {
 		return	(entityList[index]->isAlive()) &&
-				(!entityList[index]->isLocalPlayer()) &&
-				(entityList[index]->getTeam() != localPlayer->getTeam());
+			(!entityList[index]->isLocalPlayer()) &&
+			(entityList[index]->getTeam() != localPlayer->getTeam());
 	}
 
 	int ClosestEntIndexToPlayer() {
 		auto localPlayerPosition = localPlayer->getPos();
-		auto clientState = procMem->ReadMemory<uintptr_t>(Offsets::engineDll + Offsets::dwClientState);
+		auto clientState = GetClientState();
 		size_t maxPlayers = procMem->ReadMemory<size_t>(clientState + Offsets::dwClientState_MaxPlayer);
 		float leastDistance = FLT_MAX;
 		int bestIndex = INVALID_INDEX;
@@ -30,5 +33,11 @@ namespace Utils {
 			bestIndex = i;
 		}
 		return bestIndex;
+	}
+
+	bool IsIngame() {
+		auto ClientState = GetClientState();
+		auto state = procMem->ReadMemory<int>(GetClientState() + Offsets::dwClientState_State);
+		return state == Utils::SIGNONSTATE_FULL;
 	}
 }
