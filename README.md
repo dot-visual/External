@@ -1,6 +1,6 @@
 # External
-External for csgo 
+Sample external POC for csgo 
 
-Just a little side project I made years ago and have no use for it anymore.<br>
-<b>DON'T</b> copy paste! It's most likely detected and no well written code. <br>
-Credits to all I copied from back then
+I made this as a little side project in around 2016 to learn C++ & some Reverse Engineering.  <br>
+This project is solely for learning purposes and I do not encourage anyone to actually use this in an online match. <br>
+The features used here will atleast give you "Red Trust" if not a ban.
