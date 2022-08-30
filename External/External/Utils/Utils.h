@@ -183,20 +183,17 @@ namespace Utils {
 		}
 	};
 
-	class Angle
-	{
+	class Angle {
 	public:
 		float pitch, yaw, roll;
 		Angle(float p_pitch, float p_yaw, float p_roll) :pitch(p_pitch), yaw(p_yaw), roll(p_roll) {};
 		Angle() : pitch(0), yaw(0), roll(0) {};
 
-		inline Angle operator-(const Angle& a) const
-		{
+		inline Angle operator-(const Angle& a) const {
 			return Angle(yaw - a.yaw, pitch - a.pitch, roll - a.roll);
 		}
 
-		inline Angle operator*=(const Angle& a) const
-		{
+		inline Angle operator*=(const Angle& a) const {
 			return Angle(yaw * a.yaw, pitch * a.pitch, roll * a.roll);
 		}
 	};
